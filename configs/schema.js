@@ -7,3 +7,14 @@ export const USER_TABLE = pgTable('users',{
   isMember:boolean().default(false),
    
 })
+
+export const STUDY_MATERIAL_TABLE=pgTable('studymaterial',{
+  id:serial().primaryKey(),
+  courseId:varchar().notNull(),
+  courseType:varchar().notNull(),
+  topic:varchar().notNull(),
+  difficultyLevel:varchar().default('Easy'),
+  courseLayout:json(),
+  createdby:varchar().notNull(),
+
+})
