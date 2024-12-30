@@ -3,7 +3,9 @@ import React, { useState } from 'react'
 import SelectOption from './_components/SelectOption'
 import { Button } from '@/components/ui/button';
 import TopicInput from './_components/TopicInput';
-import { useStyleRegistry } from 'styled-jsx';
+import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
+import { useUser } from '@clerk/nextjs';
 
 
 
@@ -12,6 +14,7 @@ function Create() {
 
   const[formData,setFormData] = useState([]);
   //const handleUserInput = (fieldName,)
+  const {user} = useUser();
 
   const handleUserInput=(fieldName,fieldValue)=>{
     setFormData(prev=>({
@@ -20,6 +23,24 @@ function Create() {
     }))
 
     console.log(formData)
+  }
+
+  const GenerateCourseOutline=async()=>{
+    const courseId=uuidv4();
+    try{
+      const result = await axios.post('/api/generate-course-outline',{
+        courseId:courseId,
+        ...formData,
+        createdBy:user?.primaryEmailAddress?.emailAddress
+      });
+  
+      console.log(result);
+
+    }catch(error)
+    {
+      console.error(error);
+    }
+    
 
   }
   return (
@@ -36,7 +57,7 @@ function Create() {
 
       <div className='flex justify-between w-full mt-32'>
        {step!=0? <Button variant='outline' onClick={()=>setstep(step-1)}>Previous</Button>:'-'}
-       {step==0? <Button onClick={()=>setstep(step+1)}>Next</Button> : <Button>Generate</Button>} 
+       {step==0? <Button onClick={()=>setstep(step+1)}>Next</Button> : <Button onClick={GenerateCourseOutline}>Generate</Button>} 
       </div>
       
     </div> 
